@@ -168,7 +168,6 @@ const UnparkDialog = ({ parkSlot, unpark }: UnparkDialogProps) => {
         const total =
           cleanedDays * 5000 +
           Math.round(remainingHours) * parkSlot.parkingRate;
-        console.log({ over24: total });
         setToPay(total);
       } else {
         const total = Math.round(totalHours) * parkSlot.parkingRate;
@@ -184,7 +183,6 @@ const UnparkDialog = ({ parkSlot, unpark }: UnparkDialogProps) => {
         const total =
           cleanedDays * 5000 +
           Math.round(remainingHours) * parkSlot.parkingRate;
-        console.log({ over24: total });
         setToPay(total);
       } else {
         const total = Math.round(totalHours) * parkSlot.parkingRate;

@@ -62,7 +62,7 @@ export const usePark = ({
   };
 
   const parkSlotDistanceGenerator = (columns: number, rows: number) => {
-    const entryPointsArray = Array.from({ length: rows }, () =>
+    const entryPointsArray = Array.from({ length: 3 }, () =>
       Array.from({ length: rows }, () => Math.round(Math.random() * 100))
     );
     return entryPointsArray;
@@ -77,7 +77,6 @@ export const usePark = ({
 
   const getParkingSizeAvailability = (carDetails: Car) => {
     let carSize = getSize(carDetails.size);
-    console.log({ carSize2: carSize });
     let foundAvailableSpace = false;
     let foundSize = -1;
     if (carSize === 2) {
@@ -119,33 +118,17 @@ export const usePark = ({
 
   const setParking = (carDetails: Car) => {
     let isParkingFound = false;
-    console.log({ car: carDetails.size });
     let { isAvailable, size } = getParkingSizeAvailability(carDetails);
     const findProperParkingSlot = park.map(
       (rows: ParkingSpotLayout[], idx: number) => {
         return rows.map((slot: ParkingSpotLayout, idx2: number) => {
-          // console.log({
-          //   isAvailable,
-          //   isParkingFound,
-          //   vehicle: slot.vehicle,
-          //   size: slot.size,
-          //   size2: size,
-          //   isEqual:
-          //     isAvailable &&
-          //     isParkingFound === false &&
-          //     slot.vehicle === null &&
-          //     size === slot.size,
-          //   carDetails,
-          // });
           if (
             isAvailable &&
             isParkingFound === false &&
             slot.vehicle === null &&
-            size === slot.size &&
-            size >= 0
+            size === slot.size
           ) {
             isParkingFound = true;
-            console.log({ idx, idx2 });
             return {
               ...slot,
               vehicle: carDetails,
@@ -221,7 +204,7 @@ export const usePark = ({
     error,
     reset,
     unpark,
-    numberOfEntryPoints: Array.from(Array(3).keys()),
+    numberOfEntryPoints: Array.from(Array(entryPoint).keys()),
     parkingHistory,
   };
 };

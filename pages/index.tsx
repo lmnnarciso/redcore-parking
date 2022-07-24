@@ -46,36 +46,31 @@ const Home: NextPage = () => {
   if (!hasMounted) {
     return null;
   }
-  // console.log(JSON.stringify(parkLayout, null, 4));
   return (
     <div className={styles.container}>
-      {numberOfEntryPoints.map((entryPoint) => {
+      {parkLayout.map((rows, idx) => {
         return (
-          <Layout key={entryPoint}>
-            {parkLayout.map((item, idx) => (
-              <ParkSlot
-                key={item[entryPoint]?.id}
-                // key={`${entryPoint}-${item[entryPoint].size}-${item[entryPoint].distance}`}
-              >
+          <Layout key={idx}>
+            {rows.map((item, idx2) => (
+              <ParkSlot key={item.id}>
                 <div>
-                  <h2>{AREA[entryPoint]}</h2>
+                  <h2>{AREA[idx2]}</h2>
                 </div>
                 <div>
-                  <h2>{PARKING_SIZE[item[entryPoint].size]}</h2>
+                  <h2>{PARKING_SIZE[item.size]}</h2>
                 </div>
-                {item[entryPoint]?.vehicle?.size && (
+                {item.vehicle && (
                   <div>
-                    <h2>{CAR_SIZE[item[entryPoint]?.vehicle?.size]}</h2>
+                    <h2>{CAR_SIZE[item.vehicle.size]}</h2>
                   </div>
                 )}
-                {item[entryPoint]?.vehicle &&
-                  item[entryPoint].parkingTime !== null && (
-                    <UnparkDialog
-                      unpark={unpark}
-                      parkSlot={item[entryPoint]}
-                      history={parkingHistory}
-                    />
-                  )}
+                {item.vehicle && (
+                  <UnparkDialog
+                    unpark={unpark}
+                    parkSlot={item}
+                    history={parkingHistory}
+                  />
+                )}
               </ParkSlot>
             ))}
           </Layout>
