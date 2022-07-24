@@ -148,11 +148,11 @@ const Button = styled.button<ButtonProps>`
 
 interface UnparkDialogProps {
   parkSlot: ParkingSpotLayout;
-  history: ParkingHistory;
+  history?: ParkingHistory;
   unpark: any;
 }
 
-const UnparkDialog = ({ parkSlot, history, unpark }: UnparkDialogProps) => {
+const UnparkDialog = ({ parkSlot, unpark }: UnparkDialogProps) => {
   const [elapsedTime, setElapseTime] = useState(0);
   const [overrideLapseParkTime, setOverrideLapseParkTime] = useState(0);
 
@@ -206,11 +206,11 @@ const UnparkDialog = ({ parkSlot, history, unpark }: UnparkDialogProps) => {
         clearInterval(intervalId);
       };
     }, 1000);
-  }, [elapsedTime]);
+  }, [elapsedTime, parkSlot.parkingTime]);
 
   useEffect(() => {
     parkingCalculation();
-  }, [elapsedTime]);
+  }, [elapsedTime, parkingCalculation]);
 
   return (
     <AlertDialog>

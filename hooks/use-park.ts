@@ -35,7 +35,7 @@ export const usePark = ({
 }): ParkingLayout => {
   const parkSlotSizeGenerator = (parkingSlotTupleArray: any) => {
     const transformedParkingSlot = parkingSlotTupleArray.reduce(
-      (acc: any, cur: any) => {
+      (acc: any, cur: any, idx: number) => {
         return [
           ...acc,
           cur.reduce((acc2: any, cur2: any, idx2: number) => {
@@ -44,6 +44,7 @@ export const usePark = ({
             return [
               ...acc2,
               {
+                id: `${idx}${idx2}`,
                 entryPoint: idx2,
                 distance: cur2,
                 size: randomSize,
@@ -60,24 +61,24 @@ export const usePark = ({
     return transformedParkingSlot;
   };
 
-  const parkSlotDistanceGenerator = () => {
-    const entryPointsArray = [
-      [2, 1, 4],
-      [1, 3, 5],
-      [3, 4, 2],
-      [5, 2, 1],
-      [4, 5, 3],
-    ];
+  const parkSlotDistanceGenerator = (columns: number, rows: number) => {
+    const entryPointsArray = Array.from({ length: rows }, () =>
+      Array.from({ length: rows }, () => Math.round(Math.random() * 100))
+    );
     return entryPointsArray;
   };
 
-  const initialParkSlotDistance = parkSlotDistanceGenerator();
+  const initialParkSlotDistance = parkSlotDistanceGenerator(
+    entryPoint,
+    parkingSlotsPerEntryPoints
+  );
 
   const initialParkLayout = parkSlotSizeGenerator(initialParkSlotDistance);
 
   const getParkingSizeAvailability = (carDetails: Car) => {
     let carSize = getSize(carDetails.size);
-    let foundAvailableSpace;
+    console.log({ carSize2: carSize });
+    let foundAvailableSpace = false;
     let foundSize = -1;
     if (carSize === 2) {
       foundAvailableSpace = park.some((row: ParkingSpotLayout[]) =>
@@ -96,7 +97,7 @@ export const usePark = ({
           break;
         }
       }
-    } else {
+    } else if (carSize === 0) {
       for (let i = carSize; i <= 2; i++) {
         foundAvailableSpace = park.some((row: ParkingSpotLayout[]) =>
           row.some((item) => item.size === i && item.vehicle === null)
@@ -118,27 +119,45 @@ export const usePark = ({
 
   const setParking = (carDetails: Car) => {
     let isParkingFound = false;
+    console.log({ car: carDetails.size });
     let { isAvailable, size } = getParkingSizeAvailability(carDetails);
-    console.log({ isAvailable });
-    const findProperParkingSlot = park.map((rows: ParkingSpotLayout[]) => {
-      return rows.map((slot: ParkingSpotLayout) => {
-        if (
-          isAvailable &&
-          isParkingFound === false &&
-          slot.vehicle === null &&
-          size === slot.size
-        ) {
-          isParkingFound = true;
-          return {
-            ...slot,
-            vehicle: carDetails,
-            parkingTime: Math.floor(new Date().getTime() / 1000),
-          };
-        }
-        return slot;
-      });
-    }, []);
-    if (isParkingFound) {
+    const findProperParkingSlot = park.map(
+      (rows: ParkingSpotLayout[], idx: number) => {
+        return rows.map((slot: ParkingSpotLayout, idx2: number) => {
+          // console.log({
+          //   isAvailable,
+          //   isParkingFound,
+          //   vehicle: slot.vehicle,
+          //   size: slot.size,
+          //   size2: size,
+          //   isEqual:
+          //     isAvailable &&
+          //     isParkingFound === false &&
+          //     slot.vehicle === null &&
+          //     size === slot.size,
+          //   carDetails,
+          // });
+          if (
+            isAvailable &&
+            isParkingFound === false &&
+            slot.vehicle === null &&
+            size === slot.size &&
+            size >= 0
+          ) {
+            isParkingFound = true;
+            console.log({ idx, idx2 });
+            return {
+              ...slot,
+              vehicle: carDetails,
+              parkingTime: Math.floor(new Date().getTime() / 1000),
+            };
+          }
+          return slot;
+        });
+      },
+      []
+    );
+    if (isParkingFound && isAvailable) {
       setParkSlot(findProperParkingSlot);
       setParkingHistory({
         ...parkingHistory,

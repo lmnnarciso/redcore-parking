@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import React from 'react';
+import React, { useId } from 'react';
 import styled from 'styled-components';
 import UnparkDialog from '../components/UnparkModal';
 import { AREA, CAR_SIZE, PARKING_SIZE } from '../constants';
@@ -35,7 +35,7 @@ const Home: NextPage = () => {
     entryPoint: 3,
     parkingSlotsPerEntryPoints: 5,
   });
-
+  const id = useId();
   const [car, setNewCar] = React.useState<Car>();
   const [hasMounted, setHasMounted] = React.useState(false);
 
@@ -46,7 +46,7 @@ const Home: NextPage = () => {
   if (!hasMounted) {
     return null;
   }
-
+  // console.log(JSON.stringify(parkLayout, null, 4));
   return (
     <div className={styles.container}>
       {numberOfEntryPoints.map((entryPoint) => {
@@ -54,7 +54,8 @@ const Home: NextPage = () => {
           <Layout key={entryPoint}>
             {parkLayout.map((item, idx) => (
               <ParkSlot
-                key={`${entryPoint}-${item[entryPoint].size}-${item[entryPoint].distance}`}
+                key={item[entryPoint]?.id}
+                // key={`${entryPoint}-${item[entryPoint].size}-${item[entryPoint].distance}`}
               >
                 <div>
                   <h2>{AREA[entryPoint]}</h2>
@@ -62,9 +63,11 @@ const Home: NextPage = () => {
                 <div>
                   <h2>{PARKING_SIZE[item[entryPoint].size]}</h2>
                 </div>
-                <div>
-                  <h2>{CAR_SIZE?.[item[entryPoint]?.vehicle?.size]}</h2>
-                </div>
+                {item[entryPoint]?.vehicle?.size && (
+                  <div>
+                    <h2>{CAR_SIZE[item[entryPoint]?.vehicle?.size]}</h2>
+                  </div>
+                )}
                 {item[entryPoint]?.vehicle &&
                   item[entryPoint].parkingTime !== null && (
                     <UnparkDialog

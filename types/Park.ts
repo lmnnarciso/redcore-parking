@@ -1,6 +1,7 @@
 import { Car } from './Car';
 
 export interface ParkingSpotLayout {
+  id: number;
   entryPoint: number;
   distance: number;
   size: number;
