@@ -1,47 +1,40 @@
 import type { NextPage } from 'next';
 import React from 'react';
 import styled from 'styled-components';
+import UnparkDialog from '../components/UnparkModal';
+import { AREA, CAR_SIZE, PARKING_SIZE } from '../constants';
 import { usePark } from '../hooks/use-park';
 import styles from '../styles/Home.module.css';
 import { Car } from '../types/Car';
+import { carFactory } from '../utils/carFactory';
 
-const carFactory = (): Car => {
-  const randomSize = Math.round(Math.random() * 2);
-  const carId = `CAR-${Math.round(Math.random() * 100)}`;
-  const size: ('small' | 'medium' | 'large')[] = ['small', 'medium', 'large'];
-
-  const carRate = {
-    small: 20,
-    medium: 60,
-    large: 100,
-  };
-
-  return {
-    id: carId,
-    size: size[randomSize],
-    rate: carRate[size[randomSize]],
-  };
-};
-
-const ParkEntryPoint = styled.div`
+const Layout = styled.div`
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
+  justify-content: center;
 `;
 
 const ParkSlot = styled.div`
   background-color: cadetblue;
-  padding: 2zrem;
+  padding: 3rem;
   border-radius: 4px;
+  flex-basis: 200px;
 `;
 
 const Home: NextPage = () => {
-  const { parkLayout, numberOfEntryPoints, setParking, error, reset } = usePark(
-    {
-      entryPoint: 3,
-      parkingSlotsPerEntryPoints: 5,
-    }
-  );
+  const {
+    parkLayout,
+    numberOfEntryPoints,
+    setParking,
+    error,
+    reset,
+    parkingHistory,
+    unpark,
+  } = usePark({
+    entryPoint: 3,
+    parkingSlotsPerEntryPoints: 5,
+  });
 
   const [car, setNewCar] = React.useState<Car>();
   const [hasMounted, setHasMounted] = React.useState(false);
@@ -53,44 +46,67 @@ const Home: NextPage = () => {
   if (!hasMounted) {
     return null;
   }
-  console.log({ parkLayout, car });
+
   return (
     <div className={styles.container}>
       {numberOfEntryPoints.map((entryPoint) => {
-        console.log({ entryPoint });
         return (
-          <ParkEntryPoint key={entryPoint}>
+          <Layout key={entryPoint}>
             {parkLayout.map((item, idx) => (
               <ParkSlot
                 key={`${entryPoint}-${item[entryPoint].size}-${item[entryPoint].distance}`}
               >
-                {entryPoint} - {item[entryPoint].size} -{' '}
-                {item[entryPoint].distance}
-                {item[entryPoint].vehicleId}
+                <div>
+                  <h2>{AREA[entryPoint]}</h2>
+                </div>
+                <div>
+                  <h2>{PARKING_SIZE[item[entryPoint].size]}</h2>
+                </div>
+                <div>
+                  <h2>{CAR_SIZE?.[item[entryPoint]?.vehicle?.size]}</h2>
+                </div>
+                {item[entryPoint]?.vehicle &&
+                  item[entryPoint].parkingTime !== null && (
+                    <UnparkDialog
+                      unpark={unpark}
+                      parkSlot={item[entryPoint]}
+                      history={parkingHistory}
+                    />
+                  )}
               </ParkSlot>
             ))}
-          </ParkEntryPoint>
+          </Layout>
         );
       })}
-      <button
-        onClick={() => {
-          reset();
-          setNewCar(carFactory());
-        }}
-      >
-        Create Car
-      </button>
-      <button
-        disabled={car !== undefined || error !== undefined}
-        onClick={() => {
-          if (car) {
-            setParking(car);
-          }
-          setNewCar(undefined);
-        }}
-      >
-        {!error ? 'Park' : `Cant Parked. ${error}`}
-      </button>
+      <Layout>
+        <button
+          onClick={() => {
+            reset();
+            setNewCar(carFactory());
+          }}
+        >
+          Create Car
+        </button>
+        <button
+          disabled={car === undefined || error !== undefined}
+          onClick={() => {
+            if (car) {
+              setParking(car);
+            }
+            setNewCar(undefined);
+          }}
+        >
+          {!error ? 'Park' : `Cant Parked. ${error}`}
+        </button>
+      </Layout>
+
+      <div>
+        <h2>Created Car</h2>
+        <div>{car?.size}</div>
+      </div>
+      <div>
+        <p>{JSON.stringify(parkingHistory, undefined, 4)}</p>
+      </div>
     </div>
   );
 };
