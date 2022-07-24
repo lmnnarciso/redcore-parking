@@ -126,7 +126,7 @@ const buttonVariants = ({
 interface ButtonProps {
   variant?: 'mauve' | 'red' | 'violet';
 }
-const Button = styled.button<ButtonProps>`
+export const Button = styled.button<ButtonProps>`
   all: unset;
   display: inline-flex;
   align-items: center;
@@ -138,12 +138,21 @@ const Button = styled.button<ButtonProps>`
   font-weight: 600;
   height: 35px;
   cursor: pointer;
-  /* background-color: ${mauve.mauve4};
-      color: ${mauve.mauve11},
-      &:hover{ backgroundColor: mauve.mauve5 }
-      &:focus { boxShadow: 0 0 0 2px ${mauve.mauve7} },
-    }, */
   ${({ variant }) => buttonVariants({ variant: variant })}
+  :disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+`;
+
+const Input = styled.input`
+  padding: 0px 15px;
+  line-height: 2;
+  font-size: 16px;
+  border-radius: 4px;
+  background-color: white;
+  color: black;
+  -moz-appearance: textfield;
 `;
 
 interface UnparkDialogProps {
@@ -228,7 +237,7 @@ const UnparkDialog = ({ parkSlot, unpark }: UnparkDialogProps) => {
           </div>
           <div>
             <label>Custom Lapse Parking Time: </label>
-            <input
+            <Input
               type="number"
               onChange={(e) => {
                 setOverrideLapseParkTime(Number(e.target.value));

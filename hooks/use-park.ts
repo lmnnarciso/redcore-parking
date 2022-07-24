@@ -62,8 +62,8 @@ export const usePark = ({
   };
 
   const parkSlotDistanceGenerator = (columns: number, rows: number) => {
-    const entryPointsArray = Array.from({ length: 3 }, () =>
-      Array.from({ length: rows }, () => Math.round(Math.random() * 100))
+    const entryPointsArray = Array.from({ length: rows }, () =>
+      Array.from({ length: columns }, () => Math.round(Math.random() * 100))
     );
     return entryPointsArray;
   };

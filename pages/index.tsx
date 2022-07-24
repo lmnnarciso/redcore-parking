@@ -1,10 +1,9 @@
 import type { NextPage } from 'next';
-import React, { useId } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import UnparkDialog from '../components/UnparkModal';
+import UnparkDialog, { Button } from '../components/UnparkModal';
 import { AREA, CAR_SIZE, PARKING_SIZE } from '../constants';
 import { usePark } from '../hooks/use-park';
-import styles from '../styles/Home.module.css';
 import { Car } from '../types/Car';
 import { carFactory } from '../utils/carFactory';
 
@@ -35,7 +34,6 @@ const Home: NextPage = () => {
     entryPoint: 3,
     parkingSlotsPerEntryPoints: 5,
   });
-  const id = useId();
   const [car, setNewCar] = React.useState<Car>();
   const [hasMounted, setHasMounted] = React.useState(false);
 
@@ -47,7 +45,7 @@ const Home: NextPage = () => {
     return null;
   }
   return (
-    <div className={styles.container}>
+    <div>
       {parkLayout.map((rows, idx) => {
         return (
           <Layout key={idx}>
@@ -77,15 +75,17 @@ const Home: NextPage = () => {
         );
       })}
       <Layout>
-        <button
+        <Button
+          variant="violet"
           onClick={() => {
             reset();
             setNewCar(carFactory());
           }}
         >
           Create Car
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="violet"
           disabled={car === undefined || error !== undefined}
           onClick={() => {
             if (car) {
@@ -95,7 +95,7 @@ const Home: NextPage = () => {
           }}
         >
           {!error ? 'Park' : `Cant Parked. ${error}`}
-        </button>
+        </Button>
       </Layout>
 
       <div>
