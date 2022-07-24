@@ -219,7 +219,8 @@ const UnparkDialog = ({ parkSlot, unpark }: UnparkDialogProps) => {
         <AlertDialogTitle>Unparking</AlertDialogTitle>
         <AlertDialogDiv>
           <AlertDialogDescription>
-            <p>Parked Time: {overrideLapseParkTime}</p>
+            Parked Time:{' '}
+            {overrideLapseParkTime > 0 ? overrideLapseParkTime : elapsedTime}
           </AlertDialogDescription>
           <div>
             <h3>Hourly Rate: {parkSlot.parkingRate}</h3>
